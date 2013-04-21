@@ -5,7 +5,7 @@
 # [Bootstrap v2.3.1](http://twitter.github.com/bootstrap) [![Build Status](https://secure.travis-ci.org/twitter/bootstrap.png)](http://travis-ci.org/twitter/bootstrap)
 
 
-This is my first attempt to create a "BootstrapBigToe".  A compile of bootstrap that will provide a big bold interface to use in situations or with people with less than "ideal" dexterity.
+This is my first attempt to create a "BootstrapBigToe".  A compile of bootstrap that provides a big bold interface to use in situations or with people with less than "ideal" dexterity.
 
 To get started, checkout [http://getbootstrap.com](http://getbootstrap.com)!
 
