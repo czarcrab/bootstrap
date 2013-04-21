@@ -1106,7 +1106,7 @@ input[type="color"],
 input,
 textarea,
 .uneditable-input {
-  width: 206px;
+  width: 356px;
 }
 
 textarea {
@@ -1196,7 +1196,7 @@ input[type="file"] {
 }
 
 select {
-  width: 220px;
+  width: 370px;
   background-color: #ffffff;
   border: 1px solid #cccccc;
 }
@@ -1282,27 +1282,27 @@ textarea::-webkit-input-placeholder {
 }
 
 .input-mini {
-  width: 60px;
+  width: 120px;
 }
 
 .input-small {
-  width: 90px;
+  width: 180px;
 }
 
 .input-medium {
-  width: 150px;
+  width: 300px;
 }
 
 .input-large {
-  width: 210px;
+  width: 420px;
 }
 
 .input-xlarge {
-  width: 270px;
+  width: 540px;
 }
 
 .input-xxlarge {
-  width: 530px;
+  width: 1060px;
 }
 
 input[class*="span"],
