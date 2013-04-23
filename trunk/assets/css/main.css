@@ -1,0 +1,28 @@
+.not-empty{
+    color: red;
+}
+
+table#click-table {
+    border-collapse: collapse;   
+}
+#click-table tr {
+    background-color: #eee;
+    border-top: 1px solid #fff;
+    height: 150%;
+}
+#click-table tr:hover {
+    background-color: #ccc;
+}
+#click-table th {
+    background-color: #fff;
+}
+#click-table th, #click-table td {
+    padding: 3px 5px;
+    line-height: 40px;
+}
+#click-table td:hover {
+    cursor: pointer;
+}
+#click-table {
+    font-size: 150%;
+}

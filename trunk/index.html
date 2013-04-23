@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Stock Moves</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=yes, width=device-width" />
+        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+        <script src="phonegap.js" type="text/javascript" charset="utf-8"></script>
+        <style>
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+        </style>
+        <script  type="text/x-handlebars-template" id="message">
+        <p class="hero">{{message}}</p>
+    </script>
+    <script  type="text/x-handlebars-template" id="settings-form">
+
+        <form name="settings-form">
+            <div>
+                <h3><em>Settings</em></h3>
+            </div>
+
+            <div class="row">
+                <div class="span12">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <p>
+                                <label for=""><span class="not-empty">*</span> User Name:</label>
+                                <input class="input-xlarge" type="text" placeholder="User-Name" name="user_name" id="data-user_name" value="{{user_name}}">
+                            </p
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Password:</label>
+                                <input class="input-xlarge" type="password" placeholder="Password" name="password" id="data-password" value="{{password}}">
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Database:</label>
+                                <input class="input-xlarge" type="text" placeholder="Database Name" name="database" id="data-database" value="{{database}}">
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Application Server URL:</label>
+                                <input class="input-xlarge" type="text" placeholder="http://uat.primod.com" name="application_server_url" id="data-application_server_url" value="{{application_server_url}}">
+                            </p>
+                        </div>
+                        <div class="span6">
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Read Stockmove Starting From:</label>
+                                <input class="input-xlarge" name="read_stockmove_starting_from" type="text" value="{{read_stockmove_starting_from}}" >
+                            </p>
+
+                        </div>
+                        <div class="span12">
+                            <p>
+                                <button type="button" id="save-settings" class="btn btn-primary btn-large">Save</button>
+                                <button  type="button" name="cancel" class="cancel-stock-move btn btn-large">Cancel</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
+    <script  type="text/x-handlebars-template" id="sync-log-list">
+        {{#if view_name}}
+        <h3><em><span id="view-name">{{view_name}}</span></em></h3>
+        {{/if}}
+        <table class="table table-striped">
+            <tr>
+                <th>
+                    Sr No.
+                </th> 
+                <th>
+                    Message
+                </th> 
+                <th>
+                    Sync On
+                </th> 
+            </tr>
+            {{#each records}}
+            <tr>
+                <td>
+                    {{this.id}}
+                </td> 
+                <td>
+                    {{this.message}}
+                </td> 
+                <td>
+                    {{this.sync_on}}
+                </td>
+            </tr>
+            {{/each}}
+        </table>
+        <div class="pagination pagination-large">
+            <ul   style="display:inline-block;">
+                {{#each pages}}<li class="{{this.class}}"><a href="#{{this.callback}}/{{this.extended_sql}}//{{this.number}}/{{this.view_name}}" data-page="{{this.number}}" class="page-link" >{{this.label}}</a></li>{{/each}}
+            </ul>
+        </div>        
+    </script>
+
+    <script  type="text/x-handlebars-template" id="sync-status">
+        {{#if view_name}}
+        <h3><em><span id="view-name">{{view_name}}</span></em></h3>
+        {{/if}}
+        <table class="table table-striped">
+            <tr>
+                <th>
+                    Model
+                </th> 
+                <th>
+                    Last Sync On
+                </th> 
+                <th>
+                    Pending Sync For Records
+                </th> 
+            </tr>
+            {{#each records}}
+            <tr>
+                <td>
+                    {{this.model}}
+                </td> 
+                <td>
+                    {{this.sync_on}}
+                </td> 
+                <td>
+                    {{this.pending_sync_for_records}}
+                </td>
+            </tr>
+            {{/each}}
+        </table>
+        <div class="pagination pagination-large">
+            <ul   style="display:inline-block;">
+                {{#each pages}}<li class="{{this.class}}"><a href="#{{this.callback}}/{{this.extended_sql}}//{{this.number}}/{{this.view_name}}" data-page="{{this.number}}" class="page-link" >{{this.label}}</a></li>{{/each}}
+            </ul>
+        </div>        
+    </script>
+
+
+    <script  type="text/x-handlebars-template" id="stock-move-list">
+        {{#if view_name}}
+        <h3><em><span id="view-name">{{view_name}} (since {{since}})</span></em></h3>
+        {{/if}}
+        <table class="table table-striped" id="click-table">
+            <tr>
+                <th>
+                    Sr No.
+                </th> 
+                <th>
+                    Product
+                </th> 
+                <th>
+                    Quantity
+                </th> 
+                <th>
+                    Source Location
+                </th> 
+                <th>
+                    Destination Location
+                </th> 
+                <th>
+                    Status
+                </th>
+                <th>
+                    Scheduled Date
+                </th>
+            </tr>
+            {{#each records}}
+            <tr>
+                <td>
+                    {{this.serial_number_name}}
+                </td> 
+                <td>
+                    <a href="#editStockMove/{{this.id}}" style="display:block;">{{this.product_name}}</a>
+                </td> 
+                <td>
+                    {{this.quantity}}
+                </td> 
+                <td>
+                    {{this.source_location_name}}
+                </td> 
+                <td>
+                    {{this.destination_location_name}}
+                </td> 
+                <td>
+                    {{this.status_name}}
+                </td>
+                <td>
+                    {{this.scheduled_date}}
+                </td>
+            </tr>
+            {{/each}}
+        </table>        
+
+        <div class="pagination pagination-large">
+            <ul   style="display:inline-block;">
+                {{#each pages}}<li class="{{this.class}}"><a href="#{{this.callback}}/{{this.extended_sql}}//{{this.number}}/{{this.view_name}}" data-page="{{this.number}}" class="page-link" >{{this.label}}</a></li>{{/each}}
+            </ul>
+        </div>
+    </script>
+    <script type="text/x-handlebars-template" id="stock-move-form">
+        <form>
+
+            {{#if id}}
+            <h3><em>Edit Stock Move</em></h3>
+            {{else}}
+            <h3><em>Create Stock Move</em></h3>
+            {{/if}}
+            <div class="row">
+                <div class="span12">
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <input name="id" type="hidden" id="data-id" value="{{id}}">
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Serial Number:</label>
+                                <input class="input-xlarge" input name="serial_number_id" type="hidden" id="data-serial-number-id" value="{{serial_number_id}}">
+                                <input class="input-xlarge autocomplete" input name="serial_number_name" type="text" id="data-serial-number-name" value="{{serial_number_name}}" data-model="stock.production.lot"  data-label="name" data-value="id">
+
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Description:</label>
+                                <input class="input-xlarge" name="name" type="text" id="data-name" value="{{name}}" >
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Product:</label>
+                                <input class="input-xlarge" input name="product_id" type="hidden" id="data-product" value="{{product_id}}">
+                                <input class="input-xlarge autocomplete" input name="product_name" type="text" id="data-product-name" value="{{product_name}}" data-model="product.product" data-label="name" data-value="id">
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Quantity:</label>
+                                <input class="input-xlarge" input name="quantity" type="number" id="data-quantity" value="{{quantity}}">
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> UOM:</label>
+                                <input class="input-xlarge" input name="uom_id" type="hidden" id="data-uom" value="{{uom_id}}">
+                                <input class="input-xlarge autocomplete" input name="uom_name" type="text" id="data-uom-name" value="{{uom_name}}" data-model="product.uom" data-label="name" data-value="id">
+                            </p>
+                        </div>
+                        <div class="span6">
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Source Location:</label>
+                                <input class="input-xlarge" input name="source_location_id" type="hidden" id="data-source-location" value="{{source_location_id}}">
+                                <input class="input-xlarge autocomplete" input name="source_location_name" type="text" id="data-source-location-name" value="{{source_location_name}}" data-model="stock.location" data-label="name" data-value="id">
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Destination Location:</label>
+                                <input class="input-xlarge" input name="destination_location_id" type="hidden" id="data-destination-location" value="{{destination_location_id}}">
+                                <input class="input-xlarge autocomplete" input name="destination_location_name" type="text" id="data-destination-location-name" value="{{destination_location_name}}"  data-model="stock.location" data-label="name" data-value="id">
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Date:</label>
+                                <input class="input-xlarge" name="date" type="text" value="{{date}}" READONLY>
+                            </p>
+                            <p>
+                                <label for=""><span class="not-empty">*</span> Scheduled Date:</label>
+                                <input class="input-xlarge" name="scheduled_date" type="text" value="{{scheduled_date}}"  READONLY>
+                            </p>
+
+                            {{#if id}}
+                            <p>
+                                <label for="">Status:</label>
+                                <input class="input-xlarge" input name="status_id" type="hidden" id="data-status" value="{{status_id}}">
+                                <input class="input-xlarge autocomplete" input name="status_name" type="text" id="data-status-name" value="{{status_name}}"  data-model="statusList" data-label="name" data-value="id">
+                            </p>
+                            {{/if}}
+                        </div>
+                        <div class="span12">
+                            <p>
+                                {{#if editable}}
+                                <button  type="button" name="submit" class="save-stock-move-done btn btn-primary btn-large">Move Done</button>
+                                {{/if}}
+                                <button  type="button" name="cancel" class="cancel-stock-move btn btn-large">Cancel</button>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </script>
+    <link rel="stylesheet" href="assets/css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- <script src="assets/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script> -->
+</head>
+<body>
+    <!--[if lt IE 7]>
+        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
+
+
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar main-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="#">Stock Moves</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav myTab">
+                        <li class="divider-vertical"></li>
+                        <li class="active"><a href="#showStockMoves////Ready Stock Moves" ><i class="icon-home icon-white icon-large"></i>Ready Stock Moves</a></li>
+                    </ul>
+                    <ul class="nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th icon-white icon-large"></i>
+                                Views
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu myTab">
+                                <li><a href="#searchStockMoveByStatus/assigned/Available" data-status="assigned" class="search-stock-move-by-status">Available</a></li>
+                                <li><a href="#searchStockMoveByStatus/confirmed/Waiting Availability" data-status="confirmed" class="search-stock-move-by-status">Waiting Availability</a></li>
+                                <li><a href="#searchStockMoveByStatus/waiting/Waiting Another Move" data-status="waiting" class="search-stock-move-by-status">Waiting Another Move</a></li>
+                                <li><a href="#searchStockMoveByStatus/done/Done" data-status="done" class="search-stock-move-by-status">Done</a></li>
+                                <li><a href="#searchStockMoveByStatus/cancel/Cancelled" data-status="cancel" class="search-stock-move-by-status">Cancelled</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav pull-right">
+                        <li class="dropdown pull-right">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog icon-white icon-large"></i>
+                                Settings
+                                <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu myTab">
+                                <li><a href="#showSettingsForm" >Settings</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav myTab pull-right">
+                        <li><a href="#create-stock-move" class="create-stock-move"><i class="icon-plus icon-white icon-large"></i>Create</a></li>   
+                    </ul>
+                    <form class="navbar-search pull-right">
+                        <input type="text" class="search-query" id="search-input" placeholder="Search">
+                        <button type="submit" style="display:none;"> </button>
+                    </form>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <!-- Main hero unit for a primary marketing message or call to action -->
+        <div class="page" id="list-view">
+        </div>
+        <div class="page" id="form-view">
+        </div>
+        <hr />
+        <footer>
+            <p>&copy; Primary Modules 2012</p>
+        </footer>
+    </div> <!-- /container -->
+
+    <script src="assets/js/vendor/fixtures.js"></script>
+    <script src="assets/js/vendor/jquery-1.9.1.js"></script>
+    <script src="assets/js/vendor/bootstrap.min.js"></script>
+    <script src="assets/js/vendor/handelbars.js"></script>
+    <script src="assets/js/vendor/jquery.xmlrpc.js"></script>
+    <script src="assets/js/vendor/nod.js"></script>
+    <script src="assets/js/plugins.js"></script>
+
+
+    <script src="assets/js/main.js"></script>
+    <script>
+        var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+        (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g,s)}(document,'script'));
+    </script>
+</body>
+
+
+
+</html>
