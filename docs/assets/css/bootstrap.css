@@ -3046,7 +3046,7 @@ ul.icons li [class*=" icon-"] {
 }
 .dropdown-menu > li > a {
   display: block;
-  padding: 3px 20px;
+  padding: 10px 20px;
   clear: both;
   font-weight: normal;
   line-height: 40px;
